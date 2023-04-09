@@ -15,5 +15,4 @@ function table.merge(tbl, other, ...)
     return tbl
 end
 
-
 return table

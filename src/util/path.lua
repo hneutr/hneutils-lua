@@ -1,6 +1,62 @@
 local Path = {}
 local lfs = require('lfs')
+local Object = require("util.object")
+local PATH = require("path")
 string = require("util.string")
+
+
+local Path = {}
+-- exists: PATH:
+Path.exists = PATH.exists
+
+-- expanduser
+
+-- glob
+-- rglob
+
+-- home
+-- root
+-- joinpath
+-- cwd
+
+-- link_to
+-- readlink
+-- symlink_to
+
+-- is_dir
+-- mkdir
+-- rmdir
+-- iterdir
+
+-- is_file
+
+-- name
+-- rename
+-- with_name
+
+-- parent
+-- parents
+-- parts
+
+-- relative_to
+-- is_relative_to
+
+-- stem
+-- with_stem
+
+-- suffix
+-- suffixes
+-- with_suffix
+
+-- touch
+-- unlink
+
+-- read_text
+-- write_text
+
+
+
+
 
 -----------------------------------[ suffix ]-----------------------------------
 -- dir/file.suffix → suffix
