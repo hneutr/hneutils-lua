@@ -1,11 +1,11 @@
 package = "hneutil-lua"
 version = "dev-1"
 source = {
-   url = "*** please add URL for source tarball, zip or repository here ***"
+   url = "https://github.com/hneutr/hneutils-lua.git"
 }
 description = {
-   homepage = "*** please enter a project homepage ***",
-   license = "*** please specify a license ***"
+   homepage = "hne.golf",
+   license = "MIT",
 }
 dependencies = {
    "lua ~> 5.1",
