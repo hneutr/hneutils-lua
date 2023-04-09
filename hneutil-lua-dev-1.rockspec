@@ -8,7 +8,7 @@ description = {
    license = "MIT",
 }
 dependencies = {
-   "lua ~> 5.1",
+   "lua >= 5.1",
    "busted >= 2.1",
    "lua-cjson >= 2.1",
 }
