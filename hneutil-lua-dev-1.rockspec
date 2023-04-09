@@ -1,7 +1,8 @@
 package = "hneutil-lua"
 version = "dev-1"
 source = {
-   url = "https://github.com/hneutr/hneutils-lua.git"
+   url = "https://github.com/hneutr/hneutils-lua.git",
+   tag = "v1.0"
 }
 description = {
    homepage = "hne.golf",
@@ -13,5 +14,11 @@ dependencies = {
 }
 build = {
    type = "builtin",
-   modules = {}
+   modules = {
+       hneutil = "src/util.lua",
+
+       ["hneutil.path"] = "src/util/path.lua",
+       ["hneutil.table"] = "src/util/table.lua",
+       ["hneutil.string"] = "src/util/string.lua",
+   }
 }
