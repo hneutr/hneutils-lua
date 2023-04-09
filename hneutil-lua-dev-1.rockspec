@@ -1,8 +1,7 @@
 package = "hneutil-lua"
 version = "dev-1"
 source = {
-   url = "https://github.com/hneutr/hneutils-lua.git",
-   tag = "v1.0"
+   url = "git://github.com/hneutr/hneutils-lua",
 }
 description = {
    homepage = "hne.golf",
@@ -10,7 +9,8 @@ description = {
 }
 dependencies = {
    "lua ~> 5.1",
-   "busted >= 2.1"
+   "busted >= 2.1",
+   "lua-cjson >= 2.1",
 }
 build = {
    type = "builtin",
