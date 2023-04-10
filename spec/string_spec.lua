@@ -47,9 +47,6 @@ end)
 describe("splitlines", function()
     it('base case', function() 
         assert.are.same({"a", "b", "c"}, string.splitlines("a\nb\nc"))
-        local l = false
-        l = l or false
-        print(require("inspect")(l))
     end)
 
 end)

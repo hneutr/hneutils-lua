@@ -1,24 +1,59 @@
 local Path = {}
 local lfs = require('lfs')
-local Object = require("util.object")
 local PATH = require("path")
 string = require("util.string")
 
 
 local Path = {}
-Path.exists = PATH.exists
 
-Path.joinpath = function(one, two, ...)
+Path.exists = PATH.exists
+Path.unlink = PATH.remove
+Path.is_file = PATH.isfile
+Path.is_dir = PATH.isdir
+Path.mkdir = PATH.mkdir
+Path.rmdir = PATH.rmdir
+Path.name = PATH.basename
+Path.suffix = PATH.extension
+
+
+function Path.read(p)
+    local fh = io.open(p, "r")
+    local content = fh:read("*a")
+    fh:close()
+    return content
+end
+
+function Path.readlines(path)
+    return Path.read(path):splitlines()
+end
+
+function Path.write(p, content)
+    if type(content) ~= "table" then
+        content = {content}
+    end
+
+    for i, line in ipairs(content) do
+        content[i] = tostring(line)
+    end
+
+    content = string.join("\n", content)
+
+    local fh = io.open(p, "w")
+    fh:write(content)
+    fh:close()
+end
+
+function Path.touch(p)
+    if not Path.exists(p) then
+        Path.write(p, "")
+    end
+end
+
+function Path.joinpath(one, two, ...)
     one = one or ''
     two = two or ''
 
-    if two:startswith("/") then
-        if two:len() > 1 then
-            two = two:sub(2)
-        else
-            two = ''
-        end
-    end
+    two = two:removeprefix("/")
 
     if two:len() > 0 then
         return PATH.join(one, two, ...)
@@ -27,179 +62,141 @@ Path.joinpath = function(one, two, ...)
     end
 end
 
--- home: PATH.user_home
--- root: PATH.root
--- cwd: PATH.currentdir
+function Path.suffixes(p)
+    local name = Path.name(p)
 
--- is_file: PATH.isfile
--- unlink: PATH.remove
-
--- is_dir: PATH.isdir
--- mkdir: PATH.mkdir
--- rmdir: PATH.rmdir
--- iterdir
-
--- name: PATH.basename
--- with_name
-
--- parent
--- parents
--- parts
-
--- relative_to
--- is_relative_to
-
--- stem
--- with_stem
-
--- suffix: PATH.extension
--- suffixes
--- with_suffix
-
--- read_text
--- write_text
-
--- glob
--- rglob
-
--- rename: PATH.rename
--- touch
--- link_to
--- readlink
--- symlink_to
-
--- expanduser
-
--- absolute: PATH.abspath
-
--- PATH.has_dir_end
--- PATH.remove_dir_end
--- PATH.ensure_dir_end
--- PATH.normalize
--- PATH.splitext
--- PATH.splitpath
--- PATH.split
--- PATH.splitroot
--- PATH.splitdrive
-
--- PATH.dirname
-
--- PATH.isfullpath
--- PATH.isabs
--- PATH.tmpdir
--- PATH.tmpname
-
--- PATH.fullpath
--- PATH.islink
--- PATH.isempty
-
--- PATH.copy
--- PATH.chdir
--- PATH.each
-
-
-
-
--- PATH.flags
--- PATH.size
--- PATH.getsize
--- PATH.ctime
--- PATH.mtime
--- PATH.atime
--- PATH.cdate
--- PATH.mdate
--- PATH.adate
--- PATH.getctime
--- PATH.getmtime
--- PATH.getatime
-
-
-
---[[
------------------------------------[ suffix ]-----------------------------------
--- dir/file.suffix → suffix
-function Path.suffix(path)
-    local pre, suffix = string.match(path, "(.*)%.(.%)")
-    return suffix
-end
-
--- dir/file.suffix → file
-function Path.stem(path)
-    if string.find(path, "/") ~= 0 then
-        path = path:gsub(".*/", "")
+    local suffixes = {}
+    for i, suffix in ipairs(name:split(".")) do
+        if i ~= 1 then
+            suffixes[#suffixes + 1] = "." .. suffix
+        end
     end
 
-    local stem, suffix = path:match("(.*)%.(.*)")
+    return suffixes
+end
+
+function Path.stem(p)
+    local name = Path.name(p)
+    local stem, suffix = table.unpack(name:split(".", 1))
     return stem
 end
 
-function Path.read(path)
-    local file, errorString = io.open(path, "r")
-    split = split or false
-
-    local contents
-
-    if file then
-        contents = file:read("*a")
-        io.close(file)
-
-    else
-        print( "File error: " .. errorString )
+function Path.parts(p)
+    local parts = {}
+    if p:startswith("/") then
+        parts[1] = "/"
     end
-    
-    file = nil
-    return contents
-end
 
-function Path.readlines(path)
-    return string.split(Path.read(path), "\n")
-end
-
-------------------------------------[ trim ]------------------------------------
-function Path.ltrim(path)
-    local called_with = path
-    path = path or ''
-    path = tostring(path):gsub("^/", "", 1)
-    return path
-end
-
-function Path.rtrim(path)
-    local called_with = path
-    path = path or ''
-    path = tostring(path):gsub("/$", "", 1)
-    return path
-end
-
-function Path.trim(path)
-    return Path.ltrim(Path.rtrim(path))
-end
-
-
-
-function Path.join(left, right, ...)
-    local path = tostring(Path.rtrim(left)) .. '/' .. tostring(Path.ltrim(right))
-    path = Path.rtrim(path)
-
-    if ... then
-        path = Path.join(path, ...)
+    for _, part in ipairs(p:split("/")) do
+        parts[#parts + 1] = part
     end
-    
-    return path
+
+    return parts
 end
 
-function Path.listDir(dir)
-    local items = {}
+function Path.parents(p)
+    local reversedParents = {}
+
+    for i, part in ipairs(Path.parts(p)) do
+        local parent
+
+        if i == 1 then
+            parent = part
+        else
+            parent = Path.joinpath(reversedParents[#reversedParents], part)
+        end
+        reversedParents[#reversedParents + 1] = parent
+    end
+
+    local parents = {}
+    for i=#reversedParents - 1, 1, -1 do
+        parents[#parents + 1] = reversedParents[i]
+    end
+
+    return parents
+end
+
+function Path.parent(p)
+    local parents = Path.parents(p)
+    if #parents ~= nil then
+        return parents[1]
+    end
+    return ""
+end
+
+function Path.with_name(p, name)
+    return Path.joinpath(Path.parent(p), name)
+end
+
+function Path.with_stem(p, stem)
+    return Path.with_name(p, stem .. Path.suffix(p))
+end
+
+function Path.with_suffix(p, suffix)
+    return Path.with_name(p, Path.stem(p) .. suffix)
+end
+
+function Path.iterdir(dir)
+    if recursive == nil then
+        recursive = true 
+    end
+
+    local paths = {}
+
     local exclusions = {
         ["."] = true, 
         [".."] = true,
     }
     for stem in lfs.dir(dir) do
         if not exclusions[stem] then
-            table.insert(items, Path.join(dir, stem))
+            local path = Path.joinpath(dir, stem)
+            paths[#paths + 1] = path
+
+            if Path.is_dir(path) then
+                for _, subpath in ipairs(Path.iterdir(path)) do
+                    paths[#paths + 1] = subpath
+                end
+            end
         end
     end
 
-    return items
+    return paths
 end
-]]
+
+-- relative_to
+-- is_relative_to
+
+-- glob
+-- rglob
+
+-- rename: PATH.rename
+-- link_to
+-- readlink
+-- symlink_to
+
+-- home: PATH.user_home
+-- root: PATH.root
+-- cwd: PATH.currentdir
+-- PATH.tmpdir
+-- PATH.tmpname
+
+-- expanduser
+-- absolute: PATH.abspath
+
+-- PATH.dirname
+-- PATH.normalize
+-- PATH.splitext
+-- PATH.splitpath
+-- PATH.split
+-- PATH.splitroot
+
+-- PATH.isfullpath
+-- PATH.isabs
+-- PATH.fullpath
+-- PATH.islink
+-- PATH.isempty
+
+-- PATH.copy
+-- PATH.chdir
+
 return Path
