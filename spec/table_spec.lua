@@ -1,10 +1,6 @@
-require 'busted.runner'()
+table = require('util.table')
 
 describe("merge", function()
-    before_each(function()
-        table = require('util.table')
-    end)
-
     it("simple table", function()
         local original = {a = 1, b = 2}
         local defaults = {a = 0, b = -1, c = -2}

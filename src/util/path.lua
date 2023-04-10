@@ -6,32 +6,40 @@ string = require("util.string")
 
 
 local Path = {}
--- exists: PATH:
 Path.exists = PATH.exists
 
--- expanduser
+Path.joinpath = function(one, two, ...)
+    one = one or ''
+    two = two or ''
 
--- glob
--- rglob
+    if two:startswith("/") then
+        if two:len() > 1 then
+            two = two:sub(2)
+        else
+            two = ''
+        end
+    end
 
--- home
--- root
--- joinpath
--- cwd
+    if two:len() > 0 then
+        return PATH.join(one, two, ...)
+    else
+        return one
+    end
+end
 
--- link_to
--- readlink
--- symlink_to
+-- home: PATH.user_home
+-- root: PATH.root
+-- cwd: PATH.currentdir
 
--- is_dir
--- mkdir
--- rmdir
+-- is_file: PATH.isfile
+-- unlink: PATH.remove
+
+-- is_dir: PATH.isdir
+-- mkdir: PATH.mkdir
+-- rmdir: PATH.rmdir
 -- iterdir
 
--- is_file
-
--- name
--- rename
+-- name: PATH.basename
 -- with_name
 
 -- parent
@@ -44,20 +52,70 @@ Path.exists = PATH.exists
 -- stem
 -- with_stem
 
--- suffix
+-- suffix: PATH.extension
 -- suffixes
 -- with_suffix
-
--- touch
--- unlink
 
 -- read_text
 -- write_text
 
+-- glob
+-- rglob
+
+-- rename: PATH.rename
+-- touch
+-- link_to
+-- readlink
+-- symlink_to
+
+-- expanduser
+
+-- absolute: PATH.abspath
+
+-- PATH.has_dir_end
+-- PATH.remove_dir_end
+-- PATH.ensure_dir_end
+-- PATH.normalize
+-- PATH.splitext
+-- PATH.splitpath
+-- PATH.split
+-- PATH.splitroot
+-- PATH.splitdrive
+
+-- PATH.dirname
+
+-- PATH.isfullpath
+-- PATH.isabs
+-- PATH.tmpdir
+-- PATH.tmpname
+
+-- PATH.fullpath
+-- PATH.islink
+-- PATH.isempty
+
+-- PATH.copy
+-- PATH.chdir
+-- PATH.each
 
 
 
 
+-- PATH.flags
+-- PATH.size
+-- PATH.getsize
+-- PATH.ctime
+-- PATH.mtime
+-- PATH.atime
+-- PATH.cdate
+-- PATH.mdate
+-- PATH.adate
+-- PATH.getctime
+-- PATH.getmtime
+-- PATH.getatime
+
+
+
+--[[
 -----------------------------------[ suffix ]-----------------------------------
 -- dir/file.suffix → suffix
 function Path.suffix(path)
@@ -143,5 +201,5 @@ function Path.listDir(dir)
 
     return items
 end
-
+]]
 return Path
