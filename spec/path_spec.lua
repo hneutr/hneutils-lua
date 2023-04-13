@@ -1,8 +1,20 @@
 Path = require('util.path')
 
 local test_file_path = "/tmp/test-file.txt"
+
 local test_dir_path = "/tmp/test-dir"
 local test_dir_file_path = "/tmp/test-dir/test-file.txt"
+
+local test_subdir_path = "/tmp/test-dir/subdir"
+local test_subdir_file_path = "/tmp/test-dir/subdir/test-file.txt"
+
+local test_subsubdir_path = "/tmp/test-dir/subdir/subsubdir"
+local test_subsubdir_file_path = "/tmp/test-dir/subdir/subsubdir/test-file.txt"
+
+before_each(function()
+    Path.rmdir(test_dir_path, true)
+    Path.unlink(test_file_path)
+end)
 
 describe("exists", function()
     it("does", function()
@@ -140,14 +152,12 @@ describe("is_dir", function()
     it("-: file", function()
         Path.touch(test_file_path)
         assert.is_false(Path.is_dir(test_file_path))
-        Path.unlink(test_file_path)
     end)
 end)
 
 describe("rmdir", function()
     it("doesn't remove non-existing", function()
         assert.is_false(Path.exists(test_dir_path))
-        Path.rmdir(test_dir_path)
     end)
 
     it("removes existing", function()
@@ -156,6 +166,40 @@ describe("rmdir", function()
         Path.rmdir(test_dir_path)
         assert.is_false(Path.exists(test_dir_path))
     end)
+
+    it("doesn't remove if non-empty", function()
+        Path.mkdir(test_dir_path)
+        Path.touch(test_dir_file_path)
+        Path.rmdir(test_dir_path)
+        assert(Path.exists(test_dir_path))
+    end)
+
+    it("removes if non-empty and `force`", function()
+        Path.mkdir(test_dir_path)
+        Path.touch(test_dir_file_path)
+
+        Path.mkdir(test_subdir_path)
+        Path.touch(test_subdir_file_path)
+
+        Path.mkdir(test_subsubdir_path)
+        Path.touch(test_subsubdir_file_path)
+
+        Path.rmdir(test_dir_path, true)
+        assert.is_false(Path.exists(test_dir_path))
+    end)
+end)
+
+describe("is_empty", function()
+    it("empty dir", function()
+        Path.mkdir(test_dir_path)
+        assert(Path.is_empty(test_dir_path))
+    end)
+
+    it("non-empty dir", function()
+        Path.mkdir(test_dir_path)
+        Path.touch(test_dir_file_path)
+        assert.is_false(Path.is_empty(test_dir_path))
+    end)
 end)
 
 describe("mkdir", function()
@@ -163,7 +207,6 @@ describe("mkdir", function()
         assert.is_false(Path.exists(test_dir_path))
         Path.mkdir(test_dir_path)
         assert(Path.is_dir(test_dir_path))
-        Path.rmdir(test_dir_path)
     end)
 
     it("existing", function()
@@ -172,8 +215,14 @@ describe("mkdir", function()
         Path.write(test_dir_file_path, content)
         Path.mkdir(test_dir_path)
         assert.are.equal(content, Path.read(test_dir_file_path))
-        Path.unlink(test_dir_file_path)
-        Path.rmdir(test_dir_path)
+    end)
+
+    it("makes parents", function()
+        assert.is_false(Path.exists(test_dir_path))
+        assert.is_false(Path.exists(test_subdir_path))
+        Path.mkdir(test_subdir_path)
+        assert(Path.exists(test_dir_path))
+        assert(Path.exists(test_subdir_path))
     end)
 end)
 
@@ -285,8 +334,8 @@ describe("with_suffix", function()
 end)
 
 describe("iterdir", function()
-    it("works?", function()
-        local root = "/tmp/test-root"
+    it("works", function()
+        local root = test_dir_path
         local a = Path.joinpath(root, "a")
         local b = Path.joinpath(a, "b")
 
@@ -311,13 +360,50 @@ describe("iterdir", function()
         }
 
         assert.are.same(expected, Path.iterdir(root))
+    end)
 
-        Path.unlink(root_f)
-        Path.unlink(a_f)
-        Path.unlink(b_f)
+    it("doesn't recurse", function()
+        local root = test_dir_path
+        local subdir = Path.joinpath(root, "dir")
+        local file = Path.joinpath(root, "file.txt")
+        local subfile = Path.joinpath(subdir, "file.txt")
 
-        Path.rmdir(b)
-        Path.rmdir(a)
-        Path.rmdir(root)
+        Path.mkdir(root)
+        Path.mkdir(subdir)
+        Path.touch(file)
+        Path.touch(subfile)
+
+        local expected = {
+            file,
+            subdir,
+        }
+
+        assert.are.same(expected, Path.iterdir(root, {recursive = false}))
+    end)
+
+    it("files only", function()
+        local root = test_dir_path
+        local subdir = Path.joinpath(root, "dir")
+        local file = Path.joinpath(root, "file.txt")
+        local subfile = Path.joinpath(subdir, "file.txt")
+
+        Path.mkdir(root)
+        Path.mkdir(subdir)
+        Path.touch(file)
+        Path.touch(subfile)
+
+        assert.are.same({file, subfile}, Path.iterdir(root, {dirs = false}))
+    end)
+
+    it("dirs only", function()
+        local root = test_dir_path
+        local subdir = Path.joinpath(root, "dir")
+        local file = Path.joinpath(root, "file.txt")
+
+        Path.mkdir(root)
+        Path.mkdir(subdir)
+        Path.touch(file)
+
+        assert.are.same({subdir}, Path.iterdir(root, {files = false}))
     end)
 end)

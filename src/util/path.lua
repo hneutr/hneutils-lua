@@ -1,8 +1,46 @@
-local Path = {}
+--[[
+-- TODO:
+- pathlib (python):
+     - home: PATH.user_home
+     - expanduser: '~/x' → '/Users/hne/x'
+     - root: PATH.root
+     - cwd: PATH.currentdir
+     - tmpdir: PATH.tmpdir
+     - tmpfile: PATH.tmpname
+     - relative_to: get path relative to other (eg, Path.relative_to('/a/b', '/a') == 'b')
+     - is_relative_to: check if path is relative to another
+     - resolve: "./file_name.txt" → "`CWD`/file_name.txt"
+     - rename: PATH.rename
+- nvim/lua/util/path.lua: 
+     - Path.remove_from_start (use `relative_to`)
+
+not to implement:
+- pathlib (python):
+     - glob
+     - rglob
+     - absolute: PATH.abspath
+     - link_to
+     - readlink
+     - symlink_to
+- lua-path:
+     - PATH.dirname
+     - PATH.normalize
+     - PATH.splitext
+     - PATH.splitpath
+     - PATH.split
+     - PATH.splitroot
+     - PATH.isfullpath
+     - PATH.isabs
+     - PATH.fullpath
+     - PATH.islink
+     - PATH.copy
+     - PATH.chdir
+--]]
+
 local lfs = require('lfs')
 local PATH = require("path")
 string = require("util.string")
-
+table = require("util.table")
 
 local Path = {}
 
@@ -11,10 +49,31 @@ Path.unlink = PATH.remove
 Path.is_file = PATH.isfile
 Path.is_dir = PATH.isdir
 Path.mkdir = PATH.mkdir
-Path.rmdir = PATH.rmdir
 Path.name = PATH.basename
 Path.suffix = PATH.extension
+Path.is_empty = PATH.isempty
 
+function Path.rmdir(dir, force)
+    force = force or false
+
+    if not Path.exists(dir) then
+        return
+    end
+
+    if force then
+        for _, path in ipairs(table.reverse(Path.iterdir(dir))) do
+            if Path.is_file(path) then
+                Path.unlink(path)
+            elseif Path.is_dir(path) then
+                Path.rmdir(path)
+            end
+        end
+    end
+
+    if Path.is_empty(dir) then
+        PATH.rmdir(dir)
+    end
+end
 
 function Path.read(p)
     local fh = io.open(p, "r")
@@ -136,10 +195,8 @@ function Path.with_suffix(p, suffix)
     return Path.with_name(p, Path.stem(p) .. suffix)
 end
 
-function Path.iterdir(dir)
-    if recursive == nil then
-        recursive = true 
-    end
+function Path.iterdir(dir, args)
+    args = table.default(args, {recursive = true, files = true, dirs = true})
 
     local paths = {}
 
@@ -150,9 +207,10 @@ function Path.iterdir(dir)
     for stem in lfs.dir(dir) do
         if not exclusions[stem] then
             local path = Path.joinpath(dir, stem)
+
             paths[#paths + 1] = path
 
-            if Path.is_dir(path) then
+            if Path.is_dir(path) and args.recursive then
                 for _, subpath in ipairs(Path.iterdir(path)) do
                     paths[#paths + 1] = subpath
                 end
@@ -160,43 +218,16 @@ function Path.iterdir(dir)
         end
     end
 
-    return paths
+    local filteredPaths = {}
+    for i, path in ipairs(paths) do
+        if args.files and Path.is_file(path) then
+            filteredPaths[#filteredPaths + 1] = path
+        elseif args.dirs and Path.is_dir(path) then
+            filteredPaths[#filteredPaths + 1] = path
+        end
+    end
+
+    return filteredPaths
 end
-
--- relative_to
--- is_relative_to
-
--- glob
--- rglob
-
--- rename: PATH.rename
--- link_to
--- readlink
--- symlink_to
-
--- home: PATH.user_home
--- root: PATH.root
--- cwd: PATH.currentdir
--- PATH.tmpdir
--- PATH.tmpname
-
--- expanduser
--- absolute: PATH.abspath
-
--- PATH.dirname
--- PATH.normalize
--- PATH.splitext
--- PATH.splitpath
--- PATH.split
--- PATH.splitroot
-
--- PATH.isfullpath
--- PATH.isabs
--- PATH.fullpath
--- PATH.islink
--- PATH.isempty
-
--- PATH.copy
--- PATH.chdir
 
 return Path
