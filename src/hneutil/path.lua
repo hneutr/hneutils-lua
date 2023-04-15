@@ -24,8 +24,8 @@ unimplemented implement:
 
 local lfs = require('lfs')
 local PATH = require("path")
-string = require("util.string")
-table = require("util.table")
+string = require("hneutil.string")
+table = require("hneutil.table")
 
 local Path = {}
 

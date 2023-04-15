@@ -1,4 +1,4 @@
-Path = require('util.path')
+Path = require('hneutil.path')
 
 local test_file_path = "/tmp/test-file.txt"
 

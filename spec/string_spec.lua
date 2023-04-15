@@ -1,4 +1,4 @@
-string = require('util.string')
+string = require('hneutil.string')
 
 describe("split", function()
     it("has nothing to split", function()
