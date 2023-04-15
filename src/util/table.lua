@@ -36,4 +36,14 @@ function table.reverse(tbl)
     return reversed
 end
 
+function table.list_contains(tbl, item)
+    for _, tbl_item in ipairs(tbl) do
+        if tbl_item == item then
+            return true
+        end
+    end
+
+    return false
+end
+
 return table

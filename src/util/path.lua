@@ -1,40 +1,25 @@
 --[[
--- TODO:
+unimplemented implement:
 - pathlib (python):
-     - home: PATH.user_home
-     - expanduser: '~/x' → '/Users/hne/x'
-     - root: PATH.root
-     - cwd: PATH.currentdir
-     - tmpdir: PATH.tmpdir
-     - tmpfile: PATH.tmpname
-     - relative_to: get path relative to other (eg, Path.relative_to('/a/b', '/a') == 'b')
-     - is_relative_to: check if path is relative to another
-     - resolve: "./file_name.txt" → "`CWD`/file_name.txt"
-     - rename: PATH.rename
-- nvim/lua/util/path.lua: 
-     - Path.remove_from_start (use `relative_to`)
-
-not to implement:
-- pathlib (python):
-     - glob
-     - rglob
-     - absolute: PATH.abspath
-     - link_to
-     - readlink
-     - symlink_to
+    - glob
+    - rglob
+    - absolute: PATH.abspath
+    - link_to
+    - readlink
+    - symlink_to
 - lua-path:
-     - PATH.dirname
-     - PATH.normalize
-     - PATH.splitext
-     - PATH.splitpath
-     - PATH.split
-     - PATH.splitroot
-     - PATH.isfullpath
-     - PATH.isabs
-     - PATH.fullpath
-     - PATH.islink
-     - PATH.copy
-     - PATH.chdir
+    - PATH.chdir
+    - PATH.dirname
+    - PATH.normalize
+    - PATH.splitext
+    - PATH.splitpath
+    - PATH.split
+    - PATH.splitroot
+    - PATH.isfullpath
+    - PATH.isabs
+    - PATH.fullpath
+    - PATH.islink
+    - PATH.copy
 --]]
 
 local lfs = require('lfs')
@@ -52,6 +37,7 @@ Path.mkdir = PATH.mkdir
 Path.name = PATH.basename
 Path.suffix = PATH.extension
 Path.is_empty = PATH.isempty
+Path.rename = PATH.rename
 
 function Path.rmdir(dir, force)
     force = force or false
@@ -200,34 +186,94 @@ function Path.iterdir(dir, args)
 
     local paths = {}
 
-    local exclusions = {
-        ["."] = true, 
-        [".."] = true,
-    }
+    local exclusions = {[[.]], [[..]]}
     for stem in lfs.dir(dir) do
-        if not exclusions[stem] then
+        if not table.list_contains(exclusions, stem) then
             local path = Path.joinpath(dir, stem)
 
-            paths[#paths + 1] = path
+            if (Path.is_file(path) and args.files) or (Path.is_dir(path) and args.dirs) then
+                paths[#paths + 1] = path
+            end
 
             if Path.is_dir(path) and args.recursive then
-                for _, subpath in ipairs(Path.iterdir(path)) do
-                    paths[#paths + 1] = subpath
-                end
+                paths = table.list_extend(paths, Path.iterdir(path, args))
             end
         end
     end
 
-    local filteredPaths = {}
-    for i, path in ipairs(paths) do
-        if args.files and Path.is_file(path) then
-            filteredPaths[#filteredPaths + 1] = path
-        elseif args.dirs and Path.is_dir(path) then
-            filteredPaths[#filteredPaths + 1] = path
+    return paths
+end
+
+function Path.home()
+    return os.getenv("HOME")
+end
+
+function Path.expanduser(p)
+    if p:startswith("~/") then
+        p = Path.joinpath(Path.home(), p:removeprefix("~/"))
+    end
+
+    return p
+end
+
+function Path.root()
+    return "/"
+end
+
+function Path.cwd()
+    return os.getenv("PWD")
+end
+
+function Path.tempdir()
+    return Path.joinpath(Path.root(), "tmp")
+end
+
+function Path.is_relative_to(p, other)
+    for _, parent in ipairs(Path.parents(p)) do
+        if parent == other then
+            return true
         end
     end
 
-    return filteredPaths
+    return false
+end
+
+function Path.relative_to(p, other)
+    if p:startswith(other) then
+        return p:removeprefix(other):removeprefix("/")
+    else
+        error(p .. " is not relative to " .. other)
+    end
+end
+
+function Path.resolve(p)
+    if p:startswith(".") then
+        p = p:removeprefix(".")
+        -- p = Path.joinpath(Path.cwd(), p:removeprefix('.'))
+    end
+
+    if not Path.is_relative_to(p, Path.cwd()) then
+        p = Path.joinpath(Path.cwd(), p)
+    end
+
+    local parts = {}
+    for _, part in ipairs(Path.parts(p)) do
+        if part == '..' then
+            if #parts > 0 then
+                parts[#parts] = nil
+            end
+        else
+            parts[#parts + 1] = part
+        end
+    end
+
+    if #parts == 0 then
+        parts[#parts + 1] = Path.root()
+    end
+
+    p = Path.joinpath(table.unpack(parts))
+
+    return p
 end
 
 return Path

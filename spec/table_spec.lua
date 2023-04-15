@@ -43,3 +43,13 @@ describe("reverse", function()
         assert.are.same({3, 2, 1}, table.reverse({1, 2, 3}))
     end)
 end)
+
+describe("list_contains", function()
+    it("element contained", function()
+        assert(table.list_contains({1, 2, 3}, 3))
+    end)
+    it("element contained", function()
+        assert.is_false(table.list_contains({1, 2, 3}, 4))
+    end)
+end)
+
