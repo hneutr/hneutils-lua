@@ -65,6 +65,12 @@ describe("write", function()
         Path.write(test_file_path, content)
         assert.are.equal("a\nb", Path.read(test_file_path))
     end)
+
+    it("parent doesn't exist", function()
+        local content = 1
+        Path.write(test_dir_file_path, content)
+        assert.are.equal("1", Path.read(test_dir_file_path))
+    end)
 end)
 
 describe("unlink", function()

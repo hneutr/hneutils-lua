@@ -73,6 +73,10 @@ function Path.readlines(path)
 end
 
 function Path.write(p, content)
+    if not Path.exists(Path.parent(p)) then
+        Path.mkdir(Path.parent(p))
+    end
+
     if type(content) ~= "table" then
         content = {content}
     end
