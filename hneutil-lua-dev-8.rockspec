@@ -16,10 +16,6 @@ build = {
    type = "builtin",
    modules = {
       hneutil = "src/hneutil/init.lua",
-      -- ["hneutil.object"] = "src/hneutil/object.lua",
-      -- ["hneutil.path"] = "src/hneutil/path.lua",
-      -- ["hneutil.string"] = "src/hneutil/string.lua",
-      -- ["hneutil.table"] = "src/hneutil/table.lua"
    }
 }
 test = {
