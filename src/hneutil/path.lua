@@ -126,7 +126,7 @@ end
 
 function Path.stem(p)
     local name = Path.name(p)
-    local stem, suffix = table.unpack(name:split(".", 1))
+    local stem, suffix = unpack(name:split(".", 1))
     return stem
 end
 
