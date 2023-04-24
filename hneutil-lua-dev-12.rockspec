@@ -20,6 +20,7 @@ build = {
       ["hneutil.path"] = "src/hneutil/path.lua",
       ["hneutil.string"] = "src/hneutil/string.lua",
       ["hneutil.table"] = "src/hneutil/table.lua"
+      ["hneutil.io"] = "src/hneutil/io.lua"
    }
 }
 test = {
