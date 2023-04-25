@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 package = "hneutil-lua"
-version = "dev-13"
+version = "dev-14"
 source = {
    url = "git://github.com/hneutr/hneutils-lua"
 }
@@ -20,7 +20,8 @@ build = {
       ["hneutil.object"] = "src/hneutil/object.lua",
       ["hneutil.path"] = "src/hneutil/path.lua",
       ["hneutil.string"] = "src/hneutil/string.lua",
-      ["hneutil.table"] = "src/hneutil/table.lua"
+      ["hneutil.table"] = "src/hneutil/table.lua",
+      ["hneutil.yaml"] = "src/hneutil/yaml.lua"
    }
 }
 test = {

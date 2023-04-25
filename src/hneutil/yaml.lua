@@ -1,0 +1,34 @@
+string = require("hneutil.string")
+local Path = require("hneutil.path")
+local lyaml = require("lyaml")
+
+local M = {}
+
+M.load = lyaml.load
+M.document_frontmatter_separator = "\n\n\n"
+
+function M.dump(frontmatter_table)
+    local str = lyaml.dump({frontmatter_table})
+    str = str:removeprefix("---\n")
+    str = str:removesuffix("...\n")
+    return str
+end
+
+function M.write_document(path, frontmatter_table, text)
+    local frontmatter_str = M.dump(frontmatter_table)
+
+    if type(text) == "table" then
+        text = string.join("\n", text)
+    end
+
+    local content = frontmatter_str:rstrip() .. M.document_frontmatter_separator .. text:lstrip()
+    Path.write(path, content)
+end
+
+function M.read_document(path)
+    local contents = Path.read(path)
+    local frontmatter_str, text = unpack(contents:split("\n\n\n", 1))
+    return {M.load(frontmatter_str), text}
+end
+
+return M
