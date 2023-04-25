@@ -14,6 +14,14 @@ function M.dump(frontmatter_table)
     return str
 end
 
+function M.write(path, frontmatter_table)
+    Path.write(path, M.dump(frontmatter_table))
+end
+
+function M.read(path)
+    return M.load(Path.read(path))
+end
+
 function M.write_document(path, frontmatter_table, text)
     local frontmatter_str = M.dump(frontmatter_table)
 

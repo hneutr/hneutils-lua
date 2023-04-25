@@ -24,6 +24,21 @@ describe("load", function()
     end)
 end)
 
+describe("write", function()
+    it("works", function()
+        yaml.write(test_file, {a = 1})
+        assert.are.same("a: 1\n", Path.read(test_file))
+    end)
+end)
+
+describe("read", function()
+    it("works", function()
+        local expected = {a = 1}
+        yaml.write(test_file, expected)
+        assert.are.same(expected, yaml.read(test_file))
+    end)
+end)
+
 describe("write_document", function()
     it("one line of text", function()
         yaml.write_document(test_file, {a = 1}, "b")
