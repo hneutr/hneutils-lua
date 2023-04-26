@@ -3,3 +3,4 @@
 /lua_modules
 /.luarocks
 *.src.rock
+update-hnetxt.sh
