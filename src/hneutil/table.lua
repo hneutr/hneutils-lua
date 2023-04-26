@@ -46,4 +46,35 @@ function table.list_contains(tbl, item)
     return false
 end
 
+function table.is_list(tbl)
+    if type(tbl) ~= 'table' then
+        return false
+    end
+
+    -- objects always return empty size
+    if #tbl > 0 then
+        return true
+    end
+
+    -- only object can have empty length with elements inside
+    for k, v in pairs(tbl) do
+        return false
+    end
+
+    -- if no elements it can be array and not at same time
+    return true
+end
+
+function table.size(tbl)
+    if table.is_list(tbl) then
+        return #tbl
+    else
+        local count = 0
+        for k, v in pairs(tbl) do
+            count = count + 1
+        end
+        return count
+    end
+end
+
 return table
