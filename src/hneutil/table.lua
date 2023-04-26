@@ -77,4 +77,13 @@ function table.size(tbl)
     end
 end
 
+function table.keys(tbl)
+    local keys = {}
+    for k, v in pairs(tbl) do
+        keys[#keys + 1] = k
+    end
+    table.sort(keys, function(a, b) return a < b end)
+    return keys
+end
+
 return table

@@ -190,3 +190,9 @@ describe("escape", function()
         end
     end)
 end)
+
+describe("keys", function()
+    it("+", function()
+        assert.are.same({'a', 'b', 'c'}, table.keys({a = 1, b = 2, c = 3}))
+    end)
+end)
