@@ -280,4 +280,16 @@ function Path.resolve(p)
     return p
 end
 
+-- something is "file like" if it has a suffix
+function Path.is_file_like(p)
+    return Path.suffix(p):len() > 0
+end
+
+-- something is "dir like" if it has no suffix
+function Path.is_dir_like(p)
+    return Path.suffix(p):len() == 0
+end
+
+
+
 return Path
