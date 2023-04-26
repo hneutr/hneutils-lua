@@ -176,4 +176,8 @@ function string.center(str, width, fillchar)
     return str
 end
 
+function string.escape(str)
+    return str:gsub('[%-%.%+%[%]%(%)%$%^%%%?%*]','%%%1')
+end
+
 return string

@@ -182,3 +182,11 @@ describe("center", function()
         assert.are.same("a", string.center("a", 1))
     end)
 end)
+
+describe("escape", function()
+    it("escapes", function()
+        for _, char in ipairs({"^", "$", "(", ")", "%", ".", "[", "]", "*", "+", "-", "?"}) do
+            assert.are.same("%" .. char, string.escape(char))
+        end
+    end)
+end)
