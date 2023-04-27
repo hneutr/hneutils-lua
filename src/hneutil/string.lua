@@ -38,31 +38,66 @@ function _default_plain(plain)
     return plain
 end
 
+-- function string.split(str, sep, maxsplit, plain)
+--     sep = sep or " "
+--     plain = _default_plain(plain)
+
+--     local fields = {}
+--     local pattern = string.format("([^%s]+)", sep)
+
+--     if maxsplit then
+--         for i=1, maxsplit do
+--             local sepIndex = str:find(sep, 1, plain)
+--             if sepIndex then
+--                 fields[#fields + 1] = str:sub(1, sepIndex - 1)
+--                 str = str:sub(sepIndex + sep:len())
+--             end
+--         end
+
+--         if str:len() > 0 then
+--             fields[#fields + 1] = str
+--         end
+--     else
+--         str:gsub(pattern, function(c) fields[#fields + 1] = c end)
+--     end
+    
+--     return fields
+-- end
 function string.split(str, sep, maxsplit, plain)
-    sep = sep or " "
+    default_sep = " "
+    sep = sep or default_sep
     plain = _default_plain(plain)
 
-    local fields = {}
-    local pattern = string.format("([^%s]+)", sep)
+    local splits = {}
+    while str:len() > 0 and str:find(sep, 1, plain) do
+        local sep_index = str:find(sep, 1, plain)
+        if sep_index then
+            splits[#splits + 1] = str:sub(1, sep_index - 1)
+            str = str:sub(sep_index + sep:len())
+        end
 
-    if maxsplit then
-        for i=1, maxsplit do
-            local sepIndex = str:find(sep, 1, plain)
-            if sepIndex then
-                fields[#fields + 1] = str:sub(1, sepIndex - 1)
-                str = str:sub(sepIndex + sep:len())
+        if maxsplit and maxsplit == #splits then
+            break
+        end
+    end
+
+    if type(str) == 'string' then
+        splits[#splits + 1] = str
+    end
+
+    if sep == default_sep then
+        local filtered_splits = {}
+        for _, split in ipairs(splits) do
+            if split:len() > 0 then
+                filtered_splits[#filtered_splits + 1] = split
             end
         end
-
-        if str:len() > 0 then
-            fields[#fields + 1] = str
-        end
-    else
-        str:gsub(pattern, function(c) fields[#fields + 1] = c end)
+        splits = filtered_splits
     end
     
-    return fields
+    return splits
 end
+
 
 function string.rsplit(str, sep, maxsplit, plain)
     str = str:reverse()
@@ -77,7 +112,9 @@ function string.rsplit(str, sep, maxsplit, plain)
     return splits
 end
 
-function string.splitlines(str) return str:split("\n") end
+function string.splitlines(str)
+    return str:split("\n")
+end
 
 function string.startswith(str, prefix, plain)
     plain = _default_plain(plain)

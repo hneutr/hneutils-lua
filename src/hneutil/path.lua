@@ -132,12 +132,12 @@ end
 
 function Path.parts(p)
     local parts = {}
-    if p:startswith("/") then
-        parts[1] = "/"
-    end
-
     for _, part in ipairs(p:split("/")) do
         parts[#parts + 1] = part
+    end
+
+    if p:startswith("/") then
+        parts[1] = "/"
     end
 
     return parts
@@ -253,7 +253,6 @@ end
 function Path.resolve(p)
     if p:startswith(".") then
         p = p:removeprefix(".")
-        -- p = Path.joinpath(Path.cwd(), p:removeprefix('.'))
     end
 
     if not Path.is_relative_to(p, Path.cwd()) then
@@ -289,7 +288,6 @@ end
 function Path.is_dir_like(p)
     return Path.suffix(p):len() == 0
 end
-
 
 
 return Path
