@@ -274,7 +274,7 @@ function Path.resolve(p)
         parts[#parts + 1] = Path.root()
     end
 
-    p = Path.joinpath(table.unpack(parts))
+    p = Path.joinpath(unpack(parts))
 
     return p
 end
