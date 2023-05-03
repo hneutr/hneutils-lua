@@ -5,7 +5,7 @@ local lyaml = require("lyaml")
 local M = {}
 
 M.load = lyaml.load
-M.document_frontmatter_separator = "\n\n\n"
+M.document_frontmatter_separator = "\n\n"
 
 function M.dump(frontmatter_table)
     local str = lyaml.dump({frontmatter_table})
@@ -41,7 +41,7 @@ end
 
 function M.read_document(path)
     local contents = Path.read(path)
-    local frontmatter_str, text = unpack(contents:split("\n\n\n", 1))
+    local frontmatter_str, text = unpack(contents:split(M.document_frontmatter_separator, 1))
     text = text or ''
     return {M.load(frontmatter_str), text}
 end
