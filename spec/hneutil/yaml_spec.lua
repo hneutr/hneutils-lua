@@ -52,7 +52,7 @@ describe("write_document", function()
 
     it("no text", function()
         yaml.write_document(test_file, {a = 1})
-        assert.are.same("a: 1", Path.read(test_file))
+        assert.are.same("a: 1\n\n", Path.read(test_file))
     end)
 end)
 

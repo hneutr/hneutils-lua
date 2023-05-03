@@ -23,7 +23,7 @@ function M.read(path)
 end
 
 function M.write_document(path, frontmatter_table, text)
-    local frontmatter_str = M.dump(frontmatter_table)
+    local frontmatter_str = M.dump(frontmatter_table):rstrip()
 
     text = text or ''
 
@@ -31,10 +31,9 @@ function M.write_document(path, frontmatter_table, text)
         text = string.join("\n", text)
     end
 
-    local content = frontmatter_str:rstrip()
-    if text:len() > 0 then
-        content = content .. M.document_frontmatter_separator .. text:lstrip()
-    end
+    text = text:lstrip()
+
+    local content = frontmatter_str .. M.document_frontmatter_separator .. text
 
     Path.write(path, content)
 end
