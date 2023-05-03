@@ -33,6 +33,10 @@ function M.write_document(path, frontmatter_table, text)
 
     text = text:lstrip()
 
+    if text:len() == 0 then
+        text = "\n"
+    end
+
     local content = frontmatter_str .. M.document_frontmatter_separator .. text
 
     Path.write(path, content)
