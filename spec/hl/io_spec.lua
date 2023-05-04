@@ -1,5 +1,5 @@
-io = require('hneutil.io')
-local Path = require("hneutil.path")
+io = require('hl.io')
+local Path = require("hl.path")
 
 describe("command", function()
     it("simple command", function()

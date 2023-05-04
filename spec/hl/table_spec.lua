@@ -1,4 +1,4 @@
-table = require('hneutil.table')
+table = require('hl.table')
 
 describe("default", function()
     it("simple table", function()

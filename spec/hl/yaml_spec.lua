@@ -1,5 +1,5 @@
-local yaml = require('hneutil.yaml')
-local Path = require("hneutil.path")
+local yaml = require('hl.yaml')
+local Path = require("hl.path")
 
 local test_file = Path.joinpath(Path.tempdir(), "yaml-test.md")
 

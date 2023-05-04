@@ -1,6 +1,6 @@
 rockspec_format = "3.0"
 package = "hneutil-lua"
-version = "dev-15"
+version = "dev-16"
 source = {
    url = "git://github.com/hneutr/hneutils-lua"
 }
@@ -15,13 +15,14 @@ dependencies = {
 build = {
    type = "builtin",
    modules = {
-      hneutil = "src/hneutil/init.lua",
-      ["hneutil.io"] = "src/hneutil/io.lua",
-      ["hneutil.object"] = "src/hneutil/object.lua",
-      ["hneutil.path"] = "src/hneutil/path.lua",
-      ["hneutil.string"] = "src/hneutil/string.lua",
-      ["hneutil.table"] = "src/hneutil/table.lua",
-      ["hneutil.yaml"] = "src/hneutil/yaml.lua"
+      ["hl"] = "src/hl/init.lua",
+      ["hl.io"] = "src/hl/io.lua",
+      ["hl.object"] = "src/hl/object.lua",
+      ["hl.path"] = "src/hl/path.lua",
+      ["hl.string"] = "src/hl/string.lua",
+      ["hl.table"] = "src/hl/table.lua",
+      ["hl.yaml"] = "src/hl/yaml.lua",
+      hneutil = "src/hl/init.lua"
    }
 }
 test = {

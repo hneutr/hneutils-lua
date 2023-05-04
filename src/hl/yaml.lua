@@ -1,5 +1,5 @@
-string = require("hneutil.string")
-local Path = require("hneutil.path")
+string = require("hl.string")
+local Path = require("hl.path")
 local lyaml = require("lyaml")
 
 local M = {}
