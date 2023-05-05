@@ -33,7 +33,7 @@ function M.write_document(path, frontmatter_table, text)
 
     text = text:lstrip()
 
-    if text:len() == 0 then
+    if #text == 0 then
         text = "\n"
     end
 

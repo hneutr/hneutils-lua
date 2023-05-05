@@ -38,42 +38,17 @@ function _default_plain(plain)
     return plain
 end
 
--- function string.split(str, sep, maxsplit, plain)
---     sep = sep or " "
---     plain = _default_plain(plain)
-
---     local fields = {}
---     local pattern = string.format("([^%s]+)", sep)
-
---     if maxsplit then
---         for i=1, maxsplit do
---             local sepIndex = str:find(sep, 1, plain)
---             if sepIndex then
---                 fields[#fields + 1] = str:sub(1, sepIndex - 1)
---                 str = str:sub(sepIndex + sep:len())
---             end
---         end
-
---         if str:len() > 0 then
---             fields[#fields + 1] = str
---         end
---     else
---         str:gsub(pattern, function(c) fields[#fields + 1] = c end)
---     end
-    
---     return fields
--- end
 function string.split(str, sep, maxsplit, plain)
     default_sep = " "
     sep = sep or default_sep
     plain = _default_plain(plain)
 
     local splits = {}
-    while str:len() > 0 and str:find(sep, 1, plain) do
+    while #str > 0 and str:find(sep, 1, plain) do
         local sep_index = str:find(sep, 1, plain)
         if sep_index then
             splits[#splits + 1] = str:sub(1, sep_index - 1)
-            str = str:sub(sep_index + sep:len())
+            str = str:sub(sep_index + #sep)
         end
 
         if maxsplit and maxsplit == #splits then
@@ -88,7 +63,7 @@ function string.split(str, sep, maxsplit, plain)
     if sep == default_sep then
         local filtered_splits = {}
         for _, split in ipairs(splits) do
-            if split:len() > 0 then
+            if #split > 0 then
                 filtered_splits[#filtered_splits + 1] = split
             end
         end
@@ -128,7 +103,7 @@ end
 function string.join(sep, strs)
     local joined = ""
     for _, str in ipairs(strs) do
-        if joined:len() > 0 then
+        if #joined > 0 then
             joined = joined .. sep
         end
 
@@ -155,7 +130,7 @@ end
 
 function string.removeprefix(str, prefix, plain)
     if str:startswith(prefix, plain) then
-        str = str:sub(prefix:len() + 1)
+        str = str:sub(#prefix + 1)
     end
 
     return str
@@ -171,7 +146,7 @@ function string.partition(str, sep, plain)
     local sepIndex = str:find(sep, 1, plain)
     if sepIndex then
         pre = str:sub(1, sepIndex - 1)
-        post = str:sub(sepIndex + sep:len())
+        post = str:sub(sepIndex + #sep)
         return {pre, sep, post}
     end
 
@@ -193,7 +168,7 @@ function string.rfind(str, substr, plain)
     local index = str:reverse():find(substr:reverse(), 1, plain)
 
     if index then
-        index = str:len() - index
+        index = #str - index
     end
 
     return index
@@ -202,10 +177,10 @@ end
 function string.center(str, width, fillchar)
     fillchar = fillchar or " "
 
-    while str:len() < width do
+    while #str < width do
         str = fillchar .. str
 
-        if str:len() < width then
+        if #str < width then
             str = str .. fillchar
         end
     end
