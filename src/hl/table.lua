@@ -1,89 +1,38 @@
-function table.default(tbl, other, ...)
-    tbl = tbl or {}
-    for k, v in pairs(other) do
-        if tbl[k] == nil then
-            tbl[k] = other[k]
-        elseif type(v) == 'table' then
-            tbl[k] = table.default(tbl[k], v)
+local List = require("hl.List")
+local Dict = require("hl.Dict")
+
+table.list_extend = List.extend
+table.reverse = List.reverse
+table.is_list = List.is_like
+table.list_contains = List.contains
+table.keys = Dict.keys
+
+function table.default(t, t2, ...)
+    if t == nil then
+        t = t2
+    elseif type(t) == 'table' and type(t2) == 'table' then
+        for _, _t2 in ipairs(t2) do
+            table.insert(t, _t2)
+        end
+
+        for k, v2 in pairs(t2) do
+            t[k] = table.default(t[k], v2)
         end
     end
 
     if ... then
-        tbl = table.default(tbl, ...)
+        t = table.default(t, ...)
     end
         
-    return tbl
+    return t
 end
 
-function table.list_extend(tbl, other, ...)
-    tbl = tbl or {}
-    for _, val in ipairs(other) do
-        tbl[#tbl + 1] = val
-    end
-
-    if ... then
-        tbl = table.list_extend(tbl, ...)
-    end
-        
-    return tbl
-end
-
-function table.reverse(tbl)
-    local reversed = {}
-    for i=#tbl, 1, -1 do
-        reversed[#reversed + 1] = tbl[i]
-    end
-    return reversed
-end
-
-function table.list_contains(tbl, item)
-    for _, tbl_item in ipairs(tbl) do
-        if tbl_item == item then
-            return true
-        end
-    end
-
-    return false
-end
-
-function table.is_list(tbl)
-    if type(tbl) ~= 'table' then
-        return false
-    end
-
-    -- objects always return empty size
-    if #tbl > 0 then
-        return true
-    end
-
-    -- only object can have empty length with elements inside
-    for k, v in pairs(tbl) do
-        return false
-    end
-
-    -- if no elements it can be array and not at same time
-    return true
-end
-
-function table.size(tbl)
-    if table.is_list(tbl) then
-        return #tbl
+function table.size(t)
+    if table.is_list(t) then
+        return #t
     else
-        local count = 0
-        for k, v in pairs(tbl) do
-            count = count + 1
-        end
-        return count
+        return #table.keys(t)
     end
-end
-
-function table.keys(tbl)
-    local keys = {}
-    for k, v in pairs(tbl) do
-        keys[#keys + 1] = k
-    end
-    table.sort(keys, function(a, b) return a < b end)
-    return keys
 end
 
 return table

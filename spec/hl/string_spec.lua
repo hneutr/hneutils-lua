@@ -1,3 +1,4 @@
+table = require('hl.table')
 string = require('hl.string')
 
 describe("split", function()
@@ -222,7 +223,9 @@ end)
 
 describe("keys", function()
     it("+", function()
-        assert.are.same({'a', 'b', 'c'}, table.keys({a = 1, b = 2, c = 3}))
+        local actual = table.keys({a = 1, b = 2, c = 3})
+        table.sort(actual)
+        assert.are.same({'a', 'b', 'c'}, actual)
     end)
 end)
 
