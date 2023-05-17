@@ -4,20 +4,20 @@ function Dict:_init(...)
     self:update(...)
 end
 
-function Dict.update(t, t2, ...)
-    if t == nil then
-        t = t2
-    elseif type(t) == 'table' and type(t2) == 'table' then
-        for k, v2 in pairs(Dict.delist(t2)) do
-            t[k] = Dict.update(t[k], v2)
+function Dict.update(d, d2, ...)
+    if d == nil then
+        d = d2
+    elseif type(d) == 'table' and type(d2) == 'table' then
+        for k, v2 in pairs(Dict.delist(d2)) do
+            d[k] = Dict.update(d[k], v2)
         end
     end
 
     if ... then
-        t = Dict.update(t, ...)
+        d = Dict.update(d, ...)
     end
         
-    return t
+    return d
 end
 
 function Dict.delist(t)

@@ -15,7 +15,6 @@ describe("update", function()
     end)
 
     it("table and table, ignores list", function()
-        print(require("inspect")("hello"))
         assert.are.same({a = 1, b = 2}, Dict.update({a = 1}, {b = 2, "c"}))
     end)
 

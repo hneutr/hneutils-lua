@@ -3,7 +3,7 @@ local Dict = require("hl.Dict")
 
 table.list_extend = List.extend
 table.reverse = List.reverse
-table.is_list = List.is_like
+table.is_list = List.is_listlike
 table.list_contains = List.contains
 table.keys = Dict.keys
 

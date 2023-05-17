@@ -19,18 +19,14 @@ function List.pop(l)
 end
 
 function List.extend(l, l2, ...)
-    if l.is_a == nil or not l.is_a(List) then
-        l = List(l)
-    end
-
     if l2 and #l2 then
         for _, v in ipairs(l2) do
-            l:append(v)
+            List.append(l, v)
         end
     end
 
     if ... then
-        l = l:extend(...)
+        l = List.extend(l, ...)
     end
         
     return l
@@ -56,7 +52,7 @@ function List.reverse(l)
     return l
 end
 
-function List.is_like(v)
+function List.is_listlike(v)
     if type(v) ~= 'table' then
         return false
     end
