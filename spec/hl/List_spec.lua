@@ -68,3 +68,21 @@ describe("is_listlike", function()
         assert(List.is_listlike({1, 2, 3}))
     end)
 end)
+
+describe("as_list", function()
+    it("already a list", function()
+        assert.are.same(List({1, 2, 3}), List.as_list({1, 2, 3}))
+    end)
+
+    it("not a list", function()
+        assert.are.same(List({1}), List.as_list(1))
+    end)
+
+    it("string", function()
+        assert.are.same(List({"string"}), List.as_list("string"))
+    end)
+
+    it("nil", function()
+        assert.are.same(List(), List.as_list(nil))
+    end)
+end)

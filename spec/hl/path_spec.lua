@@ -496,6 +496,10 @@ describe("resolve", function()
     it("'..'", function()
         assert.are.equal(Path.joinpath(Path.cwd(), "a/c"), Path.resolve("a/b/../c"))
     end)
+
+    it("'.a'", function()
+        assert.are.equal(Path.joinpath(Path.cwd(), ".a"), Path.resolve(".a"))
+    end)
 end)
 
 describe("rename", function()

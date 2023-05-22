@@ -1,3 +1,4 @@
+local List = require("hl.List")
 -- ljust
 -- rjust
 
@@ -78,10 +79,9 @@ function string.rsplit(str, sep, maxsplit, plain)
     str = str:reverse()
     sep = sep:reverse()
 
-    local reversedSplits = str:split(sep, maxsplit, plain)
-    local splits = {}
-    for i=#reversedSplits, 1, -1 do
-        splits[#splits + 1] = reversedSplits[i]:reverse()
+    local splits = List.reverse(str:split(sep, maxsplit, plain))
+    for i, split in ipairs(splits) do
+        splits[i] = split:reverse()
     end
 
     return splits

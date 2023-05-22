@@ -42,4 +42,13 @@ function Dict.keys(d)
     return keys
 end
 
+function Dict.values(d)
+    local values = {}
+    for _, value in pairs(d) do
+        table.insert(values, value)
+    end
+
+    return values
+end
+
 return Dict

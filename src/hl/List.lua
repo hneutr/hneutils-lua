@@ -68,4 +68,12 @@ function List.is_listlike(v)
     return true
 end
 
+function List.as_list(v)
+    if type(v) ~= 'table' then
+        v = {v}
+    end
+
+    return List(v)
+end
+
 return List

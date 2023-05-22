@@ -251,7 +251,7 @@ function Path.relative_to(p, other)
 end
 
 function Path.resolve(p)
-    if p:startswith(".") then
+    if Path.parts(p)[1] == "." then
         p = p:removeprefix(".")
     end
 
