@@ -1,55 +1,19 @@
-require("pl.class").List()
+local class = require("pl.class")
 
-function List:_init(...)
-    self:extend(...)
-end
+class.List(require("pl.List"))
 
-function List.append(l, v)
-    table.insert(l, v)
-end
-
-function List.pop(l)
-    local item
-    if #l > 0 then
-        item = l[#l]
-        l[#l] = nil
-    end
-
-    return item
-end
-
-function List.extend(l, l2, ...)
-    if l2 and #l2 then
-        for _, v in ipairs(l2) do
-            List.append(l, v)
-        end
-    end
+function List:extend(l, ...)
+    self = self._base.extend(self, l)
 
     if ... then
-        l = List.extend(l, ...)
+        self = self:extend(...)
     end
-        
-    return l
+
+    return self
 end
 
-function List.contains(l, item)
-    for _, _item in ipairs(l) do
-        if _item == item then
-            return true
-        end
-    end
-
-    return false
-end
-
-function List.reverse(l)
-    local n = #l
-    for i = 1, n/2 do
-        l[i], l[n] = l[n], l[i]
-        n = n - 1
-    end
-
-    return l
+function List.from(...)
+    return List():extend(...)
 end
 
 function List.is_listlike(v)

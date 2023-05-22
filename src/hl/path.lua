@@ -24,7 +24,7 @@ unimplemented implement:
 
 local lfs = require('lfs')
 local Dict = require("hl.Dict")
-local List = require("hl.PList")
+local List = require("hl.List")
 local PATH = require("path")
 string = require("hl.string")
 

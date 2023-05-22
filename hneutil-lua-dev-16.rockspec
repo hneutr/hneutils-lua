@@ -23,7 +23,6 @@ build = {
       ["hl.yaml"] = "src/hl/yaml.lua",
       ["hl.Dict"] = "src/hl/Dict.lua",
       ["hl.List"] = "src/hl/List.lua",
-      ["hl.PList"] = "src/hl/PList.lua",
    }
 }
 test = {
