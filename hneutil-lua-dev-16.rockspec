@@ -20,10 +20,10 @@ build = {
       ["hl.object"] = "src/hl/object.lua",
       ["hl.path"] = "src/hl/path.lua",
       ["hl.string"] = "src/hl/string.lua",
-      ["hl.table"] = "src/hl/table.lua",
       ["hl.yaml"] = "src/hl/yaml.lua",
       ["hl.Dict"] = "src/hl/Dict.lua",
       ["hl.List"] = "src/hl/List.lua",
+      ["hl.PList"] = "src/hl/PList.lua",
    }
 }
 test = {

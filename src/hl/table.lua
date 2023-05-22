@@ -1,12 +1,6 @@
 local List = require("hl.List")
 local Dict = require("hl.Dict")
 
-table.list_extend = List.extend
-table.reverse = List.reverse
-table.is_list = List.is_listlike
-table.list_contains = List.contains
-table.keys = Dict.keys
-
 function table.default(t, t2, ...)
     if t == nil then
         t = t2
@@ -25,14 +19,6 @@ function table.default(t, t2, ...)
     end
         
     return t
-end
-
-function table.size(t)
-    if table.is_list(t) then
-        return #t
-    else
-        return #table.keys(t)
-    end
 end
 
 return table

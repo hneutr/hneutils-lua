@@ -23,9 +23,10 @@ unimplemented implement:
 --]]
 
 local lfs = require('lfs')
+local Dict = require("hl.Dict")
+local List = require("hl.PList")
 local PATH = require("path")
 string = require("hl.string")
-table = require("hl.table")
 
 local Path = {}
 
@@ -47,7 +48,7 @@ function Path.rmdir(dir, force)
     end
 
     if force then
-        for _, path in ipairs(table.reverse(Path.iterdir(dir))) do
+        for _, path in ipairs(List(Path.iterdir(dir)):reverse()) do
             if Path.is_file(path) then
                 Path.unlink(path)
             elseif Path.is_dir(path) then
@@ -186,13 +187,13 @@ function Path.with_suffix(p, suffix)
 end
 
 function Path.iterdir(dir, args)
-    args = table.default(args, {recursive = true, files = true, dirs = true})
+    args = Dict.from(args, {recursive = true, files = true, dirs = true})
 
     local paths = {}
 
-    local exclusions = {[[.]], [[..]]}
+    local exclusions = List({[[.]], [[..]]})
     for stem in lfs.dir(dir) do
-        if not table.list_contains(exclusions, stem) then
+        if not exclusions:contains(stem) then
             local path = Path.joinpath(dir, stem)
 
             if (Path.is_file(path) and args.files) or (Path.is_dir(path) and args.dirs) then
@@ -200,7 +201,7 @@ function Path.iterdir(dir, args)
             end
 
             if Path.is_dir(path) and args.recursive then
-                paths = table.list_extend(paths, Path.iterdir(path, args))
+                paths = List.from(paths, Path.iterdir(path, args))
             end
         end
     end

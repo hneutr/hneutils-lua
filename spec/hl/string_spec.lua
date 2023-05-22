@@ -1,4 +1,4 @@
-table = require('hl.table')
+local Dict = require("hl.Dict")
 string = require('hl.string')
 
 describe("split", function()
@@ -223,7 +223,7 @@ end)
 
 describe("keys", function()
     it("+", function()
-        local actual = table.keys({a = 1, b = 2, c = 3})
+        local actual = Dict.keys({a = 1, b = 2, c = 3})
         table.sort(actual)
         assert.are.same({'a', 'b', 'c'}, actual)
     end)

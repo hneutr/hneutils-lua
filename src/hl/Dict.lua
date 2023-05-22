@@ -20,6 +20,10 @@ function Dict.update(d, d2, ...)
     return d
 end
 
+function Dict.from(...)
+    return Dict():update(...)
+end
+
 function Dict.delist(t)
     local _t = {}
     for k, v in pairs(t) do
