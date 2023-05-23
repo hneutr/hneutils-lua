@@ -1,4 +1,5 @@
 local Dict = require("hl.Dict")
+local List = require("hl.List")
 
 describe("delist", function()
     it("works", function()
@@ -62,5 +63,68 @@ describe("from", function()
         assert.are.same({x = 1, y = 2}, a)
         assert.are.same({m = 3, n = 4}, b)
         assert.are.same({x = 1, y = 2, m = 3, n = 4}, c)
+    end)
+end)
+
+describe("foreachk", function()
+    it("works", function()
+        local d = Dict({a = 1, b = 2})
+        local l = List()
+
+        d:foreachk(function(k) l:append(k) end)
+
+        assert.are.same({'a', 'b'}, l)
+    end)
+end)
+
+describe("foreachv", function()
+    it("works", function()
+        local d = Dict({a = 1, b = 2})
+        local l = List()
+
+        d:foreachv(function(v) l:append(v) end)
+
+        assert.are.same({1, 2}, l)
+    end)
+end)
+
+describe("foreachv", function()
+    it("works", function()
+        local d = Dict({a = 1, b = 2})
+        local d2 = Dict({x = 3, y = 4})
+
+        d:foreachkv(function(k, v) d2[k] = v end)
+
+        assert.are.same({a = 1, b = 2, x = 3, y = 4}, d2)
+    end)
+end)
+
+describe("transformk", function()
+    it("works", function()
+        local d = Dict({["1"] = "a", ["2"] = "b"})
+
+        d:transformk(function(k) return tostring(tonumber(k) * -1) end)
+
+        assert.are.same({["-1"] = "a", ["-2"] = "b"}, d)
+    end)
+end)
+
+describe("transformv", function()
+    it("works", function()
+        local d = Dict({a = 1, b = 2})
+
+        d:transformv(function(v) return v * -1 end)
+
+        assert.are.same({a = -1, b = -2}, d)
+    end)
+end)
+
+describe("filterv", function()
+    it("works", function()
+        local d = Dict({a = 1, b = 2, c = 3})
+
+        d:filterv(function(v) return v ~= 2 end)
+
+        assert.are.same({a = 1, c = 3}, d)
     end)
 end)

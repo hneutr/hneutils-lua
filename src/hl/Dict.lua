@@ -38,21 +38,79 @@ function Dict.delist(t)
 end
 
 function Dict.keys(d)
-    local keys = {}
+    local keys = List()
     for key, _ in pairs(d) do
-        table.insert(keys, key)
+        keys:append(key)
     end
 
     return keys
 end
 
 function Dict.values(d)
-    local values = {}
+    local values = List()
     for _, value in pairs(d) do
-        table.insert(values, value)
+        values:append(value)
     end
 
     return values
+end
+
+function Dict:foreachk(fun, ...)
+    for k, v in pairs(self) do
+        fun(k, ...)
+    end
+end
+
+function Dict:foreachv(fun, ...)
+    for k, v in pairs(self) do
+        fun(v, ...)
+    end
+end
+
+function Dict:foreachkv(fun, ...)
+    for k, v in pairs(self) do
+        fun(k, v, ...)
+    end
+end
+
+function Dict:transformk(fun, ...)
+    local _d = Dict()
+    for k, v in pairs(self) do
+        self[k] = nil
+        _d[fun(k, ...)] = v
+    end
+
+    self:update(_d)
+
+    return self
+end
+
+function Dict:transformv(fun, ...)
+    for k, v in pairs(self) do
+        self[k] = fun(v, ...)
+    end
+
+    return self
+end
+
+function Dict:filterk(fun, ...)
+    for k, v in pairs(self) do
+        if not fun(k, ...) then
+            self[k] = nil
+        end
+    end
+
+    return self
+end
+
+function Dict:filterv(fun, ...)
+    for k, v in pairs(self) do
+        if not fun(v, ...) then
+            self[k] = nil
+        end
+    end
+
+    return self
 end
 
 return Dict
