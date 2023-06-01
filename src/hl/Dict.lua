@@ -67,7 +67,7 @@ function Dict:foreachv(fun, ...)
     end
 end
 
-function Dict:foreachkv(fun, ...)
+function Dict:foreach(fun, ...)
     for k, v in pairs(self) do
         fun(k, v, ...)
     end

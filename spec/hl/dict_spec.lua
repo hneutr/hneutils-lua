@@ -93,7 +93,7 @@ describe("foreachv", function()
         local d = Dict({a = 1, b = 2})
         local d2 = Dict({x = 3, y = 4})
 
-        d:foreachkv(function(k, v) d2[k] = v end)
+        d:foreach(function(k, v) d2[k] = v end)
 
         assert.are.same({a = 1, b = 2, x = 3, y = 4}, d2)
     end)
