@@ -1,4 +1,5 @@
 local List = require("hl.List")
+local Set = require("pl.Set")
 
 -- ljust
 -- rjust
@@ -191,6 +192,52 @@ end
 
 function string.escape(str)
     return str:gsub('[%-%.%+%[%]%(%)%$%^%%%?%*]','%%%1')
+end
+
+--[[
+https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style/Titles_of_works#Capital_letters
+https://en.wikipedia.org/wiki/List_of_English_prepositions
+--]]
+function string.title(str)
+    local keep_lower = Set({
+        -- articles
+        "a", "an", "the",
+        -- coordinating conjunctions
+        "and", "but", "or", "nor", "for", "yet", "so",
+        -- prepositions
+        "a", "abt.", "aft", "ago", "amid", "anti", "as", "at", "atop", "away", "away",
+        "back", "bar", "but", "by", "by",
+        "chez", "come", "cum", "c̄",
+        "down", "east", "ere", "for", "for", "for", "from", "from",
+        "here", "home",
+        "if", "in", "in", "into", "into",
+        "less", "lest", "like", "like",
+        "mid", "mod",
+        "near", "next", "now", "now",
+        "o'", "o'er", "of", "of", "off", "on", "on", "on", "on", "once", "onto", "out", "over", "over",
+        "pace", "past", "per", "plus", "post", "pre", "pro",
+        "qua",
+        "re",
+        "sans", "save", "save", "so", "sub",
+        "t'", "than", "than", "then", "thru", "till", "till", "to", "to",
+        "unto", "up", "upon", "upon",
+        "via", "vice",
+        "w/i", "w/o", "west", "when", "when", "with", "with",
+    })
+
+    local parts = List(str:split())
+    for i, part in ipairs(parts) do
+        part = part:lower()
+        local start_char = part:sub(1, 1):upper()
+
+        if keep_lower[part] and not (i == 1 or i == #parts) then
+            start_char = start_char:lower()
+        end
+
+        parts[i] = start_char .. part:sub(2)
+    end
+
+    return parts:join(" ")
 end
 
 return string

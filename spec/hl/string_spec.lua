@@ -229,3 +229,8 @@ describe("keys", function()
     end)
 end)
 
+describe("title", function()
+    it("works", function()
+        assert.are.equal("The Lord of the Rings", string.title("the lord of The rings"))
+    end)
+end)
