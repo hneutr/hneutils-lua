@@ -1,5 +1,6 @@
 string = require("hl.string")
-local Path = require("hl.TPath")
+
+local Path = require("hl.Path")
 local lyaml = require("lyaml")
 
 local M = {}
@@ -16,7 +17,6 @@ end
 
 function M.write(path, frontmatter_table)
     Path(path):write(M.dump(frontmatter_table))
-    -- Path.write(tostring(path), )
 end
 
 function M.read(path)

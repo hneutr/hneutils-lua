@@ -18,12 +18,11 @@ build = {
       ["hl"] = "src/hl/init.lua",
       ["hl.io"] = "src/hl/io.lua",
       ["hl.object"] = "src/hl/object.lua",
-      ["hl.path"] = "src/hl/path.lua",
       ["hl.string"] = "src/hl/string.lua",
       ["hl.yaml"] = "src/hl/yaml.lua",
       ["hl.Dict"] = "src/hl/Dict.lua",
       ["hl.List"] = "src/hl/List.lua",
-      ["hl.TPath"] = "src/hl/TPath.lua",
+      ["hl.Path"] = "src/hl/Path.lua",
    }
 }
 test = {
