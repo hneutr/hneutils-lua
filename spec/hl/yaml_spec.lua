@@ -1,7 +1,7 @@
 local yaml = require('hl.yaml')
 local Path = require("hl.path")
 
-local test_file = Path.joinpath(Path.tempdir(), "yaml-test.md")
+local test_file = Path.joinpath(tostring(Path.tempdir), "yaml-test.md")
 
 before_each(function()
     Path.unlink(test_file)

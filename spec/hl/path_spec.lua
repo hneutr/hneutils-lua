@@ -416,13 +416,13 @@ end)
 
 describe("home", function()
     it("works", function()
-        assert.are.equal(os.getenv("HOME"), Path.home())
+        assert.are.equal(os.getenv("HOME"), tostring(Path.home))
     end)
 end)
 
 describe("expanduser", function()
     it("expands at start", function()
-        assert.are.equal(Path.joinpath(Path.home(), "a"), Path.expanduser("~/a"))
+        assert.are.equal(tostring(Path.home:join("a")), Path.expanduser("~/a"))
     end)
 
     it("doesn't expand anywhere else", function()
@@ -432,19 +432,19 @@ end)
 
 describe("root", function()
     it("works", function()
-        assert.are.equal("/", Path.root())
+        assert.are.equal("/", tostring(Path.root))
     end)
 end)
 
 describe("currentdir", function()
     it("works", function()
-        assert.are.equal(os.getenv("PWD"), Path.cwd())
+        assert.are.equal(os.getenv("PWD"), tostring(Path.cwd()))
     end)
 end)
 
 describe("tmpdir", function()
     it("works", function()
-        assert.are.equal("/tmp", Path.tempdir())
+        assert.are.equal("/tmp", tostring(Path.tempdir))
     end)
 end)
 
@@ -486,19 +486,19 @@ end)
 
 describe("resolve", function()
     it("leading '.'", function()
-        assert.are.equal(Path.joinpath(Path.cwd(), "a"), Path.resolve("./a"))
+        assert.are.equal(Path.joinpath(tostring(Path.cwd()), "a"), Path.resolve("./a"))
     end)
 
     it("nonleading '.'", function()
-        assert.are.equal(Path.joinpath(Path.cwd(), "a/./b"), Path.resolve("a/./b"))
+        assert.are.equal(Path.joinpath(tostring(Path.cwd()), "a/./b"), Path.resolve("a/./b"))
     end)
 
     it("'..'", function()
-        assert.are.equal(Path.joinpath(Path.cwd(), "a/c"), Path.resolve("a/b/../c"))
+        assert.are.equal(Path.joinpath(tostring(Path.cwd()), "a/c"), Path.resolve("a/b/../c"))
     end)
 
     it("'.a'", function()
-        assert.are.equal(Path.joinpath(Path.cwd(), ".a"), Path.resolve(".a"))
+        assert.are.equal(Path.joinpath(tostring(Path.cwd()), ".a"), Path.resolve(".a"))
     end)
 end)
 

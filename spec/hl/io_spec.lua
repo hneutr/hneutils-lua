@@ -7,7 +7,7 @@ describe("command", function()
     end)
 
     it("cd", function()
-        local command = "cd " .. Path.tempdir() .. " && echo $PWD"
-        assert.are.same(Path.tempdir() .. '\n', io.command(command))
+        local command = "cd " .. tostring(Path.tempdir) .. " && echo $PWD"
+        assert.are.same(tostring(Path.tempdir) .. '\n', io.command(command))
     end)
 end)

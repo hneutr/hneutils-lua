@@ -1,5 +1,5 @@
 string = require("hl.string")
-local Path = require("hl.path")
+local Path = require("hl.TPath")
 local lyaml = require("lyaml")
 
 local M = {}
@@ -15,11 +15,12 @@ function M.dump(frontmatter_table)
 end
 
 function M.write(path, frontmatter_table)
-    Path.write(path, M.dump(frontmatter_table))
+    Path(path):write(M.dump(frontmatter_table))
+    -- Path.write(tostring(path), )
 end
 
 function M.read(path)
-    return M.load(Path.read(path))
+    return M.load(Path(path):read())
 end
 
 function M.write_document(path, frontmatter_table, text)
@@ -39,14 +40,20 @@ function M.write_document(path, frontmatter_table, text)
 
     local content = frontmatter_str .. M.document_frontmatter_separator .. text
 
-    Path.write(path, content)
+    Path(path):write(content)
 end
 
 function M.read_document(path)
-    local contents = Path.read(path)
+    local contents = Path(path):read()
     local frontmatter_str, text = unpack(contents:split(M.document_frontmatter_separator, 1))
     text = text or ''
     return {M.load(frontmatter_str), text}
+end
+
+function M.read_raw_frontmatter(path)
+    local contents = Path(path):read()
+    local frontmatter_str, text = unpack(contents:split(M.document_frontmatter_separator, 1))
+    return frontmatter_str:split("\n")
 end
 
 return M

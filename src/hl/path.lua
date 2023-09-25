@@ -22,273 +22,50 @@ unimplemented implement:
     - PATH.copy
 --]]
 
-local lfs = require('lfs')
-local Dict = require("hl.Dict")
-local List = require("hl.List")
-local PATH = require("path")
-string = require("hl.string")
+-- local lfs = require('lfs')
+-- local Dict = require("hl.Dict")
+-- local List = require("hl.List")
+-- local PATH = require("path")
+local TPath = require("hl.TPath")
+-- string = require("hl.string")
 
 local Path = {}
 
-Path.exists = PATH.exists
-Path.unlink = PATH.remove
-Path.is_file = PATH.isfile
-Path.is_dir = PATH.isdir
-Path.mkdir = PATH.mkdir
-Path.name = PATH.basename
-Path.suffix = PATH.extension
-Path.is_empty = PATH.isempty
-Path.rename = PATH.rename
+-- Path.exists = PATH.exists
+-- Path.unlink = PATH.remove
+-- Path.is_file = PATH.isfile
+-- Path.is_dir = PATH.isdir
+-- Path.mkdir = PATH.mkdir
+-- Path.name = PATH.basename
+-- Path.suffix = PATH.extension
+-- Path.is_empty = PATH.isempty
+-- Path.rename = PATH.rename
 
-function Path.rmdir(dir, force)
-    force = force or false
+-- Path.rmdir = TPath.rmdir
+-- Path.read = TPath.read
+-- Path.readlines = TPath.readlines
+-- Path.write = TPath.write
+-- Path.touch = TPath.touch
+-- Path.suffixes = TPath.suffixes
+-- Path.stem = TPath.stem
+-- Path.parts = TPath.parts
+-- Path.with_name = TPath.with_name
+-- Path.with_stem = TPath.with_stem
+-- Path.with_suffix = TPath.with_suffix
+-- Path.expanduser = TPath.expanduser
+-- Path.is_relative_to = TPath.is_relative_to
+-- Path.relative_to = TPath.relative_to
+-- Path.resolve = TPath.resolve
+-- Path.parents = TPath.parents
+-- Path.parent = TPath.parent
+-- Path.iterdir = TPath.iterdir
+-- Path.is_file_like = TPath.is_file_like
+-- Path.is_dir_like = TPath.is_dir_like
 
-    if not Path.exists(dir) then
-        return
-    end
+-- Path.joinpath = TPath.join
+-- Path.home = TPath.home
+-- Path.root = TPath.root
+-- Path.cwd = TPath.cwd
+-- Path.tempdir = TPath.tempdir
 
-    if force then
-        for _, path in ipairs(List(Path.iterdir(dir)):reverse()) do
-            if Path.is_file(path) then
-                Path.unlink(path)
-            elseif Path.is_dir(path) then
-                Path.rmdir(path)
-            end
-        end
-    end
-
-    if Path.is_empty(dir) then
-        PATH.rmdir(dir)
-    end
-end
-
-function Path.read(p)
-    local fh = io.open(p, "r")
-    local content = fh:read("*a")
-    fh:close()
-    return content
-end
-
-function Path.readlines(path)
-    return Path.read(path):splitlines()
-end
-
-function Path.write(p, content)
-    if not Path.exists(Path.parent(p)) then
-        Path.mkdir(Path.parent(p))
-    end
-
-    if type(content) ~= "table" then
-        content = {content}
-    end
-
-    for i, line in ipairs(content) do
-        content[i] = tostring(line)
-    end
-
-    content = string.join("\n", content)
-
-    local fh = io.open(p, "w")
-    fh:write(content)
-    fh:close()
-end
-
-function Path.touch(p)
-    if not Path.exists(p) then
-        Path.write(p, "")
-    end
-end
-
-function Path.joinpath(one, two, ...)
-    one = one or ''
-    two = two or ''
-
-    two = two:removeprefix("/")
-
-    if #two > 0 then
-        return PATH.join(one, two, ...)
-    else
-        return one
-    end
-end
-
-function Path.suffixes(p)
-    local name = Path.name(p)
-
-    local suffixes = {}
-    for i, suffix in ipairs(name:split(".")) do
-        if i ~= 1 then
-            suffixes[#suffixes + 1] = "." .. suffix
-        end
-    end
-
-    return suffixes
-end
-
-function Path.stem(p)
-    local name = Path.name(p)
-    local stem, suffix = unpack(name:split(".", 1))
-    return stem
-end
-
-function Path.parts(p)
-    local parts = {}
-    for _, part in ipairs(p:split("/")) do
-        parts[#parts + 1] = part
-    end
-
-    if p:startswith("/") then
-        parts[1] = "/"
-    end
-
-    return parts
-end
-
-function Path.parents(p)
-    local reversedParents = {}
-
-    for i, part in ipairs(Path.parts(p)) do
-        local parent
-
-        if i == 1 then
-            parent = part
-        else
-            parent = Path.joinpath(reversedParents[#reversedParents], part)
-        end
-        reversedParents[#reversedParents + 1] = parent
-    end
-
-    local parents = {}
-    for i=#reversedParents - 1, 1, -1 do
-        parents[#parents + 1] = reversedParents[i]
-    end
-
-    return parents
-end
-
-function Path.parent(p)
-    local parents = Path.parents(p)
-    if #parents ~= nil then
-        return parents[1]
-    end
-    return ""
-end
-
-function Path.with_name(p, name)
-    return Path.joinpath(Path.parent(p), name)
-end
-
-function Path.with_stem(p, stem)
-    return Path.with_name(p, stem .. Path.suffix(p))
-end
-
-function Path.with_suffix(p, suffix)
-    return Path.with_name(p, Path.stem(p) .. suffix)
-end
-
-function Path.iterdir(dir, args)
-    args = Dict.from(args, {recursive = true, files = true, dirs = true})
-
-    local paths = {}
-
-    local exclusions = List({[[.]], [[..]]})
-    for stem in lfs.dir(dir) do
-        if not exclusions:contains(stem) then
-            local path = Path.joinpath(dir, stem)
-
-            if (Path.is_file(path) and args.files) or (Path.is_dir(path) and args.dirs) then
-                paths[#paths + 1] = path
-            end
-
-            if Path.is_dir(path) and args.recursive then
-                paths = List.from(paths, Path.iterdir(path, args))
-            end
-        end
-    end
-
-    return paths
-end
-
-function Path.home()
-    return os.getenv("HOME")
-end
-
-function Path.expanduser(p)
-    if p:startswith("~/") then
-        p = Path.joinpath(Path.home(), p:removeprefix("~/"))
-    end
-
-    return p
-end
-
-function Path.root()
-    return "/"
-end
-
-function Path.cwd()
-    return os.getenv("PWD")
-end
-
-function Path.tempdir()
-    return Path.joinpath(Path.root(), "tmp")
-end
-
-function Path.is_relative_to(p, other)
-    for _, parent in ipairs(Path.parents(p)) do
-        if parent == other then
-            return true
-        end
-    end
-
-    return false
-end
-
-function Path.relative_to(p, other)
-    if p:startswith(other) then
-        return p:removeprefix(other):removeprefix("/")
-    else
-        error(p .. " is not relative to " .. other)
-    end
-end
-
-function Path.resolve(p)
-    if Path.parts(p)[1] == "." then
-        p = p:removeprefix(".")
-    end
-
-    if not Path.is_relative_to(p, Path.cwd()) then
-        p = Path.joinpath(Path.cwd(), p)
-    end
-
-    local parts = {}
-    for _, part in ipairs(Path.parts(p)) do
-        if part == '..' then
-            if #parts > 0 then
-                parts[#parts] = nil
-            end
-        else
-            parts[#parts + 1] = part
-        end
-    end
-
-    if #parts == 0 then
-        parts[#parts + 1] = Path.root()
-    end
-
-    p = Path.joinpath(unpack(parts))
-
-    return p
-end
-
--- something is "file like" if it has a suffix
-function Path.is_file_like(p)
-    return #Path.suffix(p) > 0
-end
-
--- something is "dir like" if it has no suffix
-function Path.is_dir_like(p)
-    return #Path.suffix(p) == 0
-end
-
-
-return Path
+return TPath

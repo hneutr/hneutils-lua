@@ -24,13 +24,13 @@ end)
 
 describe("tempdir", function()
     it("works", function()
-        assert.are.equal(TPath("/tmp"), Path.tempdir())
+        assert.are.equal(TPath("/tmp"), Path.tempdir)
     end)
 end)
 
 describe("home", function()
     it("works", function()
-        assert.are.equal(Path(os.getenv("HOME")), Path.home())
+        assert.are.equal(Path(os.getenv("HOME")), Path.home)
     end)
 end)
 
@@ -114,7 +114,11 @@ end)
 
 describe("expanduser", function()
     it("expands at start", function()
-        assert.are.equal(Path.home():join("a"), Path("~/a"):expanduser())
+        assert.are.equal(Path.home:join("a"), Path("~/a"):expanduser())
+    end)
+
+    it("expands at start: non-object", function()
+        assert.are.equal(tostring(Path.home:join("a")), Path.expanduser("~/a"))
     end)
 
     it("doesn't expand anywhere else", function()
@@ -295,7 +299,7 @@ end)
 
 describe("is_dir", function()
     it("+", function()
-        assert(Path.tempdir():is_dir())
+        assert(Path.tempdir:is_dir())
     end)
 
     it("-: non-existing", function()
@@ -313,6 +317,17 @@ end)
 
 describe("is_file", function()
     local p = Path(file_path)
+
+    it("+: non-method", function()
+        p:touch()
+        assert(TPath.is_file(p))
+    end)
+
+    it("+: string", function()
+        p:touch()
+        assert(TPath.is_file(file_path))
+    end)
+
     it("+", function()
         p:touch()
         assert(p:is_file())
@@ -324,7 +339,7 @@ describe("is_file", function()
     end)
 
     it("-: dir", function()
-        assert.is_false(Path.tempdir():is_file())
+        assert.is_false(Path.tempdir:is_file())
     end)
 end)
 
@@ -454,6 +469,10 @@ describe("with_name", function()
     it("does it", function()
         assert.are.same(Path("/a/b/x.y"), Path("/a/b/c.d"):with_name("x.y"))
     end)
+
+    it("+: base", function()
+        assert.are.same("/a/b/x.y", Path.with_name("/a/b/c.d", "x.y"))
+    end)
 end)
 
 describe("with_stem", function()
@@ -555,7 +574,6 @@ describe("rename", function()
         local new_file = new_dir:join(old_file:name())
 
         old_file:write("123")
-
         old_dir:rename(new_dir)
 
         assert.falsy(old_dir:exists())
@@ -578,5 +596,34 @@ describe("is_dir_like", function()
     end)
     it("-: extention", function()
         assert.falsy(Path("a.md"):is_dir_like())
+    end)
+end)
+
+describe("make_fn_match_input", function()
+    local dummy_fn = function(...) return ... end
+
+    it("string -> string", function()
+        assert.are.same("abc", Path.make_fn_match_input(dummy_fn)("abc"))
+    end)
+
+    it("Path -> Path", function()
+        local p = Path("abc")
+        assert.are.same(p, Path.make_fn_match_input(dummy_fn)(p))
+    end)
+end)
+
+describe("removesuffix", function()
+    it("works with string", function()
+        assert.are.same(
+            "ab",
+            Path.removesuffix("abc", "c")
+        )
+    end)
+
+    it("works with Path", function()
+        assert.are.same(
+            Path("ab"),
+            Path("abc"):removesuffix("c")
+        )
     end)
 end)
