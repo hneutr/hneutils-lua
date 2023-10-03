@@ -4,3 +4,4 @@
 /.luarocks
 *.src.rock
 update-hnetxt.sh
+.DS_Store

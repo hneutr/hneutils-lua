@@ -38,7 +38,7 @@ class.Path()
 Path.sep = "/"
 
 function Path.as_string(p)
-    if type(p) ~= 'string' then
+    if p ~= nil and type(p) ~= 'string' then
         p = tostring(p)
     end
 
@@ -46,7 +46,7 @@ function Path.as_string(p)
 end
 
 function Path.as_path(p)
-    if Path.is_a(p) ~= Path then
+    if p ~= nil and Path.is_a(p) ~= Path then
         p = Path(p)
     end
 
