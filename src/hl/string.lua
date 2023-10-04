@@ -240,4 +240,17 @@ function string.title(str)
     return parts:join(" ")
 end
 
+function string.rpad(str, width, char)
+    char = char or " "
+
+    return str .. char:rep(width - str:len())
+end
+
+function string.lpad(str, width, char)
+    char = char or " "
+
+    return char:rep(width - str:len()) .. str
+end
+
+
 return string

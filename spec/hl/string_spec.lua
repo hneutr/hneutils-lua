@@ -234,3 +234,23 @@ describe("title", function()
         assert.are.equal("The Lord of the Rings", string.title("the lord of The rings"))
     end)
 end)
+
+describe("rpad", function()
+    it("works", function()
+        assert.are.equal("1 ", string.rpad("1", 2))
+    end)
+
+    it("works", function()
+        assert.are.equal("122", string.rpad("1", 3, "2"))
+    end)
+end)
+
+describe("lpad", function()
+    it("works", function()
+        assert.are.equal(" 1", string.lpad("1", 2))
+    end)
+
+    it("works", function()
+        assert.are.equal("221", string.lpad("1", 3, "2"))
+    end)
+end)
